@@ -1,0 +1,14 @@
+*.sh text eol=lf
+*.md text eol=lf
+pakoon text eol=lf
+src/launcher/*.cpp text eol=lf
+src/launcher/*.rc text eol=lf
+tools/windows-readme.txt text eol=crlf
+*.png binary
+*.xz binary
+*.ttf binary
+*.ico binary
+# The games keep the line endings they have upstream, file by file.
+src/pakoon0/** -text
+src/pakoon1/** -text
+src/pakoon2/** -text

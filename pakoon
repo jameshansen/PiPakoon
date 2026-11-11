@@ -1,0 +1,26 @@
+#!/bin/sh
+# Pakoon: pick one of the three games and play it. The launcher comes back when a game ends.
+here=$(dirname "$(readlink -f "$0")")
+cd "$here" || exit 1
+
+# SDL talks to Wayland itself where it can. That lets a game draw fewer lines than the
+# screen has, with the display scaling the picture up (PAKOON_HEIGHT, read by the games).
+export SDL_VIDEODRIVER=wayland,x11
+# One window name for the launcher and all three games, so the taskbar finds the menu
+# entry and its icon.
+export SDL_VIDEO_WAYLAND_WMCLASS=pakoon SDL_VIDEO_X11_WMCLASS=pakoon
+
+# The lines game $1 draws. A Raspberry Pi 4 or 400 runs Pakoon 1 and 2 well at 720, and a
+# Pi 5 or 500 has the speed for 1080. Pakoon 0's menus are a fixed size in pixels and
+# small on a big screen, so it draws 720 on every Pi. PAKOON_HEIGHT, if set, overrides this.
+height() {
+  case "$(tr -d '\0' </proc/device-tree/model 2>/dev/null):$1" in
+    *"Pi 5"*:[12]) echo 1080 ;;
+    *) echo 720 ;;
+  esac
+}
+
+pick=0
+while pick=$("$here/launcher" "$pick"); do
+  (cd "pakoon$pick" && PAKOON_HEIGHT=${PAKOON_HEIGHT:-$(height "$pick")} exec ./Pakoon) >/dev/null 2>&1
+done
