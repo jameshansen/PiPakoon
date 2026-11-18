@@ -8,7 +8,7 @@
 | `pakoon1` | [tunp/Pakoon1](https://github.com/tunp/Pakoon1) | `bd32825c3e2c78a861d7812e8223715db5d32c66` |
 | `pakoon2` | [tunp/Pakoon2](https://github.com/tunp/Pakoon2) | `7f707360141a553a38b518ac61cccb26317bf535` |
 
-Every other file is byte for byte as it is there. The files below were changed on 10 November 2026 for PiPakoon, and the changes are under the same licence as the games, the GNU General Public License version 2 or later (`gpl.txt` and `Copyright.txt` in each folder).
+Every other file is byte for byte as it is there. The files below were changed for PiPakoon on 10 and 17 November 2026, and the changes are under the same licence as the games, the GNU General Public License version 2 or later (`gpl.txt` and `Copyright.txt` in each folder).
 
 | File | Change |
 | --- | --- |
@@ -18,6 +18,9 @@ Every other file is byte for byte as it is there. The files below were changed o
 | `pakoon0/main2.cpp`, `pakoon1/main.cpp`, `pakoon2/SourceCode/main.cpp` | The window is opened with `openGameWindow`, and the main loop calls `waitForNextFrame` after each frame. The games do a whole number of physics steps per frame, 200 or 300 a second divided by the frame rate, so on a machine that drew more frames than that the world stood still. In `pakoon2`, the browser build's loop function is compiled only for the browser build, so the game compiles for Linux again. |
 | `pakoon0/GetawayView.cpp` | `getFirstDialogOfType<DlgOnScreenKbd *>` is instantiated explicitly, so the game links when built with optimization. |
 | `pakoon1/HeightMap.cpp`, `pakoon1/PerlinNoise.cpp`, `pakoon2/SourceCode/HeightMap.cpp`, `pakoon2/SourceCode/PerlinNoise.cpp` | Member functions used from other files are no longer marked `inline`, so the game links when built with optimization. |
+| `pakoon1/PakoonPhysicsEngine/PakoonPhysicsEngine.h` | `PPEC_Wheel` has a virtual destructor. A vehicle's wheels are made as `BWheel` and deleted through `PPEC_Wheel`, which is undefined behaviour; loading a vehicle a second time in one session, as when going back to the menu and picking the plane again, deleted them that way. |
+| `pakoon1/BSimulation.cpp` | The nearest gas station is found by distance in three dimensions. Before, the vehicle's height was dropped but each station's was kept, so in high worlds such as Ice World a lower station further away could win over the one the vehicle was parked at, and fuelling never started. |
+| `pakoon1/Spirit.vehicle` | `FuelDistance` is 3.0, up from 2.0. The propeller keeps the plane's nose off the wall, so its fuel cap could reach the nozzle only when parked within about half a metre of dead centre on level ground. |
 
 The Windows build compiles the same files with two extra definitions on the command line, `GL_BGR` and `GL_BGRA`, which Windows' own OpenGL header lacks. `tools/build-windows.sh` has them.
 

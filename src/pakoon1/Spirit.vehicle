@@ -3,7 +3,7 @@
 Name = Spirit
 Image = ./Textures/Spirit.tga
 FuelLocation = 0, 2.5, 1
-FuelDistance = 2.0
+FuelDistance = 3.0
 
 [Geometry]
 

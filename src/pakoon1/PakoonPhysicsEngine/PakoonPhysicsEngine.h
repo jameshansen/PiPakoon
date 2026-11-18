@@ -135,6 +135,7 @@ public:
   int          m_nGroundHits;
 
   virtual void Init() {}
+  virtual ~PPEC_Wheel() {}
 };
 
 
