@@ -529,7 +529,6 @@ void BSimulation::UpdateGasStationTracking() {
   }
 
   BVector vVehicle = GetVehicle()->m_vLocation;
-  vVehicle.m_dZ = 0.0;
   BTerrainBlock *pNewTargetBlock = 0;
   double dDist = 99999.9;
   if(pTarget) {
