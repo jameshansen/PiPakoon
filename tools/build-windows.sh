@@ -101,7 +101,6 @@ find Pakoon -name '*.pdb' -delete
 
 cp "$repo/src/pakoon0/gpl.txt" "Pakoon/licences/Pakoon - GNU GPL 2.txt"
 cp "$repo/src/pakoon0/Copyright.txt" "Pakoon/licences/Pakoon - copyright.txt"
-cp "$repo/LICENSE" "Pakoon/licences/Launcher - MIT.txt"
 cp "$repo/fonts/OFL.txt" "Pakoon/licences/Launcher font - OFL.txt"
 cp deps/SDL2-2.32.10/LICENSE.txt Pakoon/licences/SDL2.txt
 cp deps/SDL2_image-2.8.12/LICENSE.txt Pakoon/licences/SDL2_image.txt

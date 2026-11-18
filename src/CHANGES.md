@@ -24,4 +24,4 @@ Every other file is byte for byte as it is there. The files below were changed f
 
 The Windows build compiles the same files with two extra definitions on the command line, `GL_BGR` and `GL_BGRA`, which Windows' own OpenGL header lacks. `tools/build-windows.sh` has them.
 
-`launcher` is new and is not part of the Pakoon sources. It is under the MIT licence in the repository's `LICENSE`.
+`launcher` is new and is not part of the Pakoon sources. It is under the same licence as the games, the GNU General Public License version 2 or later, in the repository's `LICENSE`.
