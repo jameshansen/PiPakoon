@@ -1,0 +1,72 @@
+# Builds PiPakoon.tar.gz for Raspberry Pi OS and Pakoon-Windows.zip on every push and pull
+# request. A tag such as v1.0.1 also makes a draft release with both attached.
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pi:
+    # Raspberry Pi OS 13 is built on Debian 13 (trixie) for 64-bit Arm.
+    runs-on: ubuntu-24.04-arm
+    container: debian:trixie
+    steps:
+      - name: Install the compiler and the libraries a Pi has
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates g++ make dpkg-dev binutils xz-utils \
+            libsdl2-2.0-0 libsdl2-ttf-2.0-0 libsdl2-image-2.0-0 libvorbisfile3 libgl-dev libglu1-mesa-dev
+      - uses: actions/checkout@v7
+      - name: Build the runtime
+        run: BUILD=/tmp/pakoon-build bash tools/build-runtime.sh
+      - name: Check RUNTIME_FILES in install.sh
+        run: |
+          n=$(tar -tJf runtime.tar.xz | wc -l)
+          grep -q "^RUNTIME_FILES=$n " install.sh || { echo "runtime.tar.xz has $n entries; set RUNTIME_FILES=$n in install.sh"; exit 1; }
+      - name: Pack the installer
+        run: |
+          mkdir PiPakoon
+          cp install.sh runtime.tar.xz icon.png LICENSE PiPakoon/
+          chmod 755 PiPakoon/install.sh
+          tar -czf PiPakoon.tar.gz --owner=0 --group=0 PiPakoon
+      - uses: actions/upload-artifact@v7
+        with:
+          name: PiPakoon
+          path: PiPakoon.tar.gz
+
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Build for Windows
+        run: bash tools/build-windows.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Pakoon-Windows
+          path: dist/Pakoon-Windows.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [pi, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+      - name: Make a draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create "$GITHUB_REF_NAME" PiPakoon.tar.gz Pakoon-Windows.zip --draft --title "PiPakoon ${GITHUB_REF_NAME#v}" --notes ""

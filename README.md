@@ -106,7 +106,7 @@ PAKOON_WINDOW=1280x720 ~/Games/Pakoon/pakoon
 
 ## How it works
 
-The three games are C++ programs that draw with OpenGL and use SDL2 for the window, the keyboard and the sound. `tools/build-runtime.sh` compiles them on a Pi and packs them, with the files they play from, into `runtime.tar.xz`. Everything they load at run time is part of Raspberry Pi OS with desktop, apart from SDL2_net, which Pakoon 2 uses for its multiplayer mode and which travels in `lib/` beside the games.
+The three games are C++ programs that draw with OpenGL and use SDL2 for the window, the keyboard and the sound. `tools/build-runtime.sh` compiles them for 64-bit Raspberry Pi OS and packs them, with the files they play from, into `runtime.tar.xz`. Everything they load at run time is part of Raspberry Pi OS with desktop, apart from SDL2_net, which Pakoon 2 uses for its multiplayer mode and which travels in `lib/` beside the games.
 
 A Pi 4's graphics chip is the limit, not its processor. At 1080 lines Pakoon 1 ran at 14 to 22 frames a second on a Pi 400 with the processor mostly idle. The games now open their window through SDL's Wayland driver, which can give a full-screen program a smaller picture and have the display scale it up. `PAKOON_HEIGHT` names the lines to draw, and the launcher script sets it for the Pi it runs on. At 720 lines a Pi 400 runs Pakoon 1 at 45 to 60 frames a second and Pakoon 2 at about 60. Where the Wayland driver is not in use, the games draw at the display's own size.
 
@@ -116,9 +116,13 @@ The games are held to 100 frames a second. They do a whole number of physics ste
 
 The launcher is a small SDL program, `src/launcher/launcher.cpp`. On a Pi it shows the three games, prints the number of the one picked and ends, and the `pakoon` script starts that game and opens the launcher again afterwards. On Windows the launcher starts the game itself and waits for it. The launcher and the games all name their window `pakoon`, which is how the Pi's taskbar finds the menu entry and shows its icon for each of them.
 
-## Building the runtime
+## Building
 
-This is only needed after changing the source. On a Raspberry Pi with an internet connection:
+GitHub Actions builds both versions from the source on every push and pull request, and keeps `PiPakoon.tar.gz` and `Pakoon-Windows.zip` with each run. The Pi's build runs in Debian 13 on an Arm machine, the base Raspberry Pi OS 13 is made from.
+
+### Building on a Raspberry Pi
+
+With an internet connection:
 
 ```bash
 tools/build-runtime.sh
@@ -136,11 +140,7 @@ This runs on Windows in Git Bash, or on Linux, and needs [zig](https://ziglang.o
 
 ### A release
 
-A release has two files. The Pi's is the installer, the runtime, the icon and the licence in one archive, and the Windows zip comes from the script above.
-
-```bash
-git archive --format=tar.gz --prefix=PiPakoon/ -o PiPakoon.tar.gz HEAD install.sh runtime.tar.xz icon.png LICENSE
-```
+A release has two files. The Pi's is the installer, the runtime, the icon and the licence in one archive, and the Windows zip comes from the script above. Pushing a tag such as `v1.0.1` builds both and makes a draft release on GitHub with them attached, ready for its notes and publishing.
 
 ## Pi Projects
 
@@ -156,7 +156,7 @@ PiPakoon is one of five projects for the Raspberry Pi. One is a utility for the 
 
 ## AI use disclosure
 
-PiPakoon was built using [Claude Code](https://claude.com/claude-code) with Claude Fable 5.2.
+PiPakoon was built using [Claude Code](https://claude.com/claude-code) with Claude Fable 5.2 and Claude Opus 5.5.
 
 ## Credits
 
@@ -168,6 +168,6 @@ The launcher's title and game names are set in [Bungee](https://github.com/djrrb
 
 ## Licence
 
-The games are free software under the GNU General Public License, version 2 or later. That covers `src/pakoon0`, `src/pakoon1` and `src/pakoon2`, each of which keeps its `Copyright.txt` and `gpl.txt`, the changes made to them here, and the programs built from them in `runtime.tar.xz`. They are Copyright (C) 2004 Mikko Oksalahti.
+PiPakoon is free software under the GNU General Public License, version 2 or later, the same licence as the games. The full text is in [LICENSE](LICENSE). That covers the installer, the launcher, the build scripts, the three games in `src/pakoon0`, `src/pakoon1` and `src/pakoon2`, the changes made to them here, and the programs built from them. Each game folder keeps its `Copyright.txt` and `gpl.txt`, and the games are Copyright (C) 2004 Mikko Oksalahti.
 
-The installer, the launcher and the build scripts are free software under the [MIT licence](LICENSE). The launcher's font is under the SIL Open Font License in `fonts/OFL.txt`.
+The launcher's font is under the SIL Open Font License in `fonts/OFL.txt`.

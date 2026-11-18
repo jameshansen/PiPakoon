@@ -39,9 +39,10 @@ Where it comes from
 Source code, the Raspberry Pi version and the list of changes made to the games:
 https://github.com/jameshansen/PiPakoon
 
-The games are Copyright (C) 2004 Mikko Oksalahti and are free software under the GNU
-General Public License, version 2 or later. They were ported to SDL by tunp
-(https://github.com/tunp). This is an unofficial build and is not affiliated with either.
+The games are Copyright (C) 2004 Mikko Oksalahti. They and the launcher are free software
+under the GNU General Public License, version 2 or later. The games were ported to SDL by
+tunp (https://github.com/tunp). This is an unofficial build and is not affiliated with
+either.
 
 The licences folder holds the licences of the games, the launcher and the libraries that
 travel with them. SDL2_ttf.dll also contains FreeType (https://freetype.org, FreeType
